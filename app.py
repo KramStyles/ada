@@ -1,5 +1,5 @@
 import sys, sqlite3  # To bring in the operating system
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit  # To introduce the Qapplication and QDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QMainWindow  # To introduce the Qapplication and QDialog
 from PyQt5.uic import loadUi  # is used to run the UI designed
 from datetime import datetime
 
@@ -9,11 +9,22 @@ DB = sqlite3.connect('database.sql', check_same_thread=False)
 cursor = DB.cursor()
 
 
+class User(QMainWindow):
+    def __init__(self):
+        try:
+            super(User, self).__init__()
+            loadUi('ui/student.ui', self)
+
+            self.show()
+        except Exception as err:
+            print(err)
+
 class Login(QDialog):  # Login inherits every form element from the QDialog import
     def __init__(self):  # A function that runs immediately the code is ran
         super(Login, self).__init__()
         loadUi('ui/login.ui', self)
 
+        self.w = None
         self.buttonHandle()
         self.setWindowTitle('My new window title')
         self.show()
@@ -28,6 +39,11 @@ class Login(QDialog):  # Login inherits every form element from the QDialog impo
             self.txtPassword.setEchoMode(2)
         else:
             self.txtPassword.setEchoMode(0)
+
+    def showUser(self):
+        self.w = User()
+        self.w.show()
+        self.hide()
 
     def register(self):
         # from PyQt5.QtWidgets import QComboBox
@@ -75,7 +91,10 @@ class Login(QDialog):  # Login inherits every form element from the QDialog impo
                 msg = "Invalid Password"
             else:
                 if Sun.verify(passwd, result[0]):
-                    msg = "You are logged in"
+                    # msg = "You are logged in"
+                    print('logged')
+                    self.showUser()
+                    print('after logged')
                 else:
                     msg = "Your password is incorrect"
         except Exception as err:

@@ -1,5 +1,5 @@
 import sys, sqlite3  # To bring in the operating system
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QMainWindow  # To introduce the Qapplication and QDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QMainWindow, QWidget  # To introduce the Qapplication and QDialog
 from PyQt5.uic import loadUi  # is used to run the UI designed
 from datetime import datetime
 
@@ -8,16 +8,47 @@ from functions import *
 DB = sqlite3.connect('database.sql', check_same_thread=False)
 cursor = DB.cursor()
 
+class studentEdit(QWidget):
+    def __init__(self):
+        super(studentEdit, self).__init__()
+        loadUi('ui/studentEditProfile.ui', self)
+        # self.show()
 
 class User(QMainWindow):
     def __init__(self):
         try:
             super(User, self).__init__()
             loadUi('ui/student.ui', self)
+            self.username = 'kosi'
+            self.w = studentEdit()
 
+            self.loadInfo()
+            self.buttonHandle()
             self.show()
         except Exception as err:
             print(err)
+
+    def buttonHandle(self):
+        self.actionClose.triggered.connect(closeApp)
+        self.btnEdit.clicked.connect(self.editProfile)
+
+    def editProfile(self):
+        print('hello')
+        self.w.show()
+
+    def loadInfo(self):
+        sql = f"""SELECT * FROM users WHERE username = '{self.username}'"""
+        result = cursor.execute(sql).fetchall()[0]
+        self.lblName.setText(result[1])
+        self.lblUser.setText(result[2])
+        self.lblEmail.setText(result[4])
+        self.lblRegDate.setText(result[6])
+        print(result[6])
+        self.lblPhone.setText(result[7])
+        self.lblReg.setText(result[8])
+        self.lblFalc.setText(result[9])
+        self.lblDept.setText(result[10])
+
 
 class Login(QDialog):  # Login inherits every form element from the QDialog import
     def __init__(self):  # A function that runs immediately the code is ran
@@ -41,9 +72,10 @@ class Login(QDialog):  # Login inherits every form element from the QDialog impo
             self.txtPassword.setEchoMode(0)
 
     def showUser(self):
-        self.w = User()
-        self.w.show()
-        self.hide()
+        # self.w = User()
+        # self.w.show()
+        # self.hide()
+        pass
 
     def register(self):
         # from PyQt5.QtWidgets import QComboBox
@@ -91,9 +123,7 @@ class Login(QDialog):  # Login inherits every form element from the QDialog impo
                 msg = "Invalid Password"
             else:
                 if Sun.verify(passwd, result[0]):
-                    # msg = "You are logged in"
                     print('logged')
-                    self.showUser()
                     print('after logged')
                 else:
                     msg = "Your password is incorrect"
@@ -105,9 +135,10 @@ class Login(QDialog):  # Login inherits every form element from the QDialog impo
 
 
 def closeApp():
+    print('hello')
     sys.exit()
 
 
 app = QApplication(sys.argv)
-win = Login()  # First form to run
+win = User()  # First form to run
 sys.exit(app.exec_())  # Prevents the app from closing after we run the python script

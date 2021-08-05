@@ -12,7 +12,33 @@ class studentEdit(QWidget):
     def __init__(self):
         super(studentEdit, self).__init__()
         loadUi('ui/studentEditProfile.ui', self)
+
+        self.username = 'kosi'
+        self.buttonHandle()
         # self.show()
+
+    def buttonHandle(self):
+        self.showInfo()
+        self.btnUpdate.clicked.connect(self.updateProfile)
+
+    def showInfo(self):
+        sql = f"""SELECT * FROM users WHERE username = '{self.username}'"""
+        result = cursor.execute(sql).fetchall()[0]
+        self.txtFullname.setText(result[1])
+        self.txtPhone.setText(result[7])
+        self.txtEmail.setText(result[4])
+        self.txtReg.setText(result[8])
+        self.txtFac.setText(result[9])
+        self.txtDept.setText(result[10])
+
+    def updateProfile(self):
+        Fullname = self.txtFullname.text()
+        Phone = self.txtPhone.text()
+        Email = self.txtEmail.text()
+        Reg = self.txtReg.text()
+        Fac = self.txtFac.text()
+        Dept = self.txtDept.text()
+
 
 class User(QMainWindow):
     def __init__(self):

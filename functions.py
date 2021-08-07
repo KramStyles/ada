@@ -1,8 +1,10 @@
 from passlib.hash import sun_md5_crypt as Sun
 
-def checkEmpty(arrays):
-    msg = False
-    for case in arrays:
+
+def checkEmpty(shadow):
+    empty = False
+    for case in shadow:
         if not case:
-            msg = True
-    return msg
+            empty = True
+    return empty
+

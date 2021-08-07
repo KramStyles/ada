@@ -5,6 +5,8 @@ y = "is trending soon"
 z = f"{x} {y}"
 print(z)
 
+if case == '' or case == 0 |||| if not case
+
 info1 = ['Michael', 'Obinna', 12, 4.5, True, 'yellow']
 info2 = ['Hannah', 'Chima', 18, 0.3, False, 'blue']
 info = {

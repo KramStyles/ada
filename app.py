@@ -8,6 +8,7 @@ from functions import *
 DB = sqlite3.connect('database.sql', check_same_thread=False)
 cursor = DB.cursor()
 
+
 class studentEdit(QWidget):
     def __init__(self):
         super(studentEdit, self).__init__()
@@ -30,14 +31,30 @@ class studentEdit(QWidget):
         self.txtReg.setText(result[8])
         self.txtFac.setText(result[9])
         self.txtDept.setText(result[10])
+        self.txtUsername.setText(result[2])
 
     def updateProfile(self):
         Fullname = self.txtFullname.text()
         Phone = self.txtPhone.text()
-        Email = self.txtEmail.text()
         Reg = self.txtReg.text()
         Fac = self.txtFac.text()
         Dept = self.txtDept.text()
+        Username = self.txtUsername.text()
+        arr = [Fullname, Phone, Reg, Fac, Dept]
+
+        if checkEmpty(arr) is True:
+            msg = 'Fill all fields'
+        else:
+            try:
+                sql = f"""UPDATE users SET fullname = '{Fullname}', regnumber = '{Reg}', faculty = '{Fac}', department = '{Dept}', phone = '{Phone}' """
+                cursor.execute(sql)
+                DB.commit()
+                msg = "Details Saved"
+                # User.loadInfo(User)
+            except Exception as err:
+                print(err)
+                msg = str(err)
+        self.lblMsg.setText(msg)
 
 
 class User(QMainWindow):
@@ -47,7 +64,6 @@ class User(QMainWindow):
             loadUi('ui/student.ui', self)
             self.username = 'kosi'
             self.w = studentEdit()
-
             self.loadInfo()
             self.buttonHandle()
             self.show()
@@ -67,6 +83,7 @@ class User(QMainWindow):
         result = cursor.execute(sql).fetchall()[0]
         self.lblName.setText(result[1])
         self.lblUser.setText(result[2])
+        self.nnamdi = result[2]
         self.lblEmail.setText(result[4])
         self.lblRegDate.setText(result[6])
         print(result[6])

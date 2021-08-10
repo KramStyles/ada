@@ -1,6 +1,7 @@
 import sys, sqlite3  # To bring in the operating system
 from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QMainWindow, QWidget  # To introduce the Qapplication and QDialog
 from PyQt5.uic import loadUi  # is used to run the UI designed
+from PyQt5.QtCore import QTimer
 from datetime import datetime
 
 from functions import *
@@ -14,6 +15,10 @@ class studentEdit(QWidget):
         super(studentEdit, self).__init__()
         loadUi('ui/studentEditProfile.ui', self)
 
+        self.value = 0
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.progressbar)
+
         self.username = 'kosi'
         self.buttonHandle()
         # self.show()
@@ -21,6 +26,18 @@ class studentEdit(QWidget):
     def buttonHandle(self):
         self.showInfo()
         self.btnUpdate.clicked.connect(self.updateProfile)
+
+    def progressbar(self):
+        self.value = self.value + 5
+        if self.value <= 100:
+            self.progBar.setValue(self.value)
+            self.lblMsg.setText('Updating...')
+        else:
+            self.timer.stop()
+            self.lblMsg.setText('')
+            self.progBar.setValue(0)
+            self.value = 0
+            self.close()
 
     def showInfo(self):
         sql = f"""SELECT * FROM users WHERE username = '{self.username}'"""
@@ -46,10 +63,11 @@ class studentEdit(QWidget):
             msg = 'Fill all fields'
         else:
             try:
-                sql = f"""UPDATE users SET fullname = '{Fullname}', regnumber = '{Reg}', faculty = '{Fac}', department = '{Dept}', phone = '{Phone}' """
+                sql = f"""UPDATE users SET fullname = '{Fullname}', regnumber = '{Reg}', faculty = '{Fac}', department = '{Dept}', phone = '{Phone}' WHERE username = '{self.username}'"""
                 cursor.execute(sql)
                 DB.commit()
                 msg = "Details Saved"
+                self.timer.start(50)
                 # User.loadInfo(User)
             except Exception as err:
                 print(err)

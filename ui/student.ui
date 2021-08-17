@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>996</width>
-    <height>640</height>
+    <height>907</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -717,6 +717,7 @@ QScrollBar::sub-page:vertical
     <property name="title">
      <string>Password</string>
     </property>
+    <addaction name="actionChange_Password"/>
    </widget>
    <widget class="QMenu" name="menuResults">
     <property name="title">
@@ -738,6 +739,11 @@ QScrollBar::sub-page:vertical
   <action name="actionClose">
    <property name="text">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="actionChange_Password">
+   <property name="text">
+    <string>Change Password</string>
    </property>
   </action>
  </widget>

@@ -1,13 +1,16 @@
-import sys, sqlite3  # To bring in the operating system
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QMainWindow, QWidget  # To introduce the Qapplication and QDialog
+import sys, sqlite3, secrets  # To bring in the operating system
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QMainWindow, QWidget, QMessageBox  # To introduce the Qapplication and QDialog
 from PyQt5.uic import loadUi  # is used to run the UI designed
 from PyQt5.QtCore import QTimer
 from datetime import datetime
 
 from functions import *
+from requests import request, ConnectionError, Timeout
 
 DB = sqlite3.connect('database.sql', check_same_thread=False)
 cursor = DB.cursor()
+
+USERNAME = ''
 
 
 class studentEdit(QWidget):
@@ -19,7 +22,6 @@ class studentEdit(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.progressbar)
 
-        self.username = 'kosi'
         self.buttonHandle()
         # self.show()
 
@@ -68,7 +70,8 @@ class studentEdit(QWidget):
                 DB.commit()
                 msg = "Details Saved"
                 self.timer.start(50)
-                # User.loadInfo(User)
+                U = User()
+                U.loadInfo(User)
             except Exception as err:
                 print(err)
                 msg = str(err)
@@ -80,8 +83,8 @@ class User(QMainWindow):
         try:
             super(User, self).__init__()
             loadUi('ui/student.ui', self)
-            self.username = 'kosi'
-            self.w = studentEdit()
+            print(self.username)
+            self.w = None
             self.loadInfo()
             self.buttonHandle()
             self.show()
@@ -94,9 +97,13 @@ class User(QMainWindow):
 
     def editProfile(self):
         print('hello')
+        studentEdit.username = self.username
+        self.w = studentEdit()
+        # studentEdit.show()
         self.w.show()
 
     def loadInfo(self):
+        print('Load info working now')
         sql = f"""SELECT * FROM users WHERE username = '{self.username}'"""
         result = cursor.execute(sql).fetchall()[0]
         self.lblName.setText(result[1])
@@ -125,6 +132,40 @@ class Login(QDialog):  # Login inherits every form element from the QDialog impo
         self.btnShowPass.clicked.connect(self.showPassword)
         self.btnRegister.clicked.connect(self.register)
         self.btnLogin.clicked.connect(self.login)
+        self.btnForgot.clicked.connect(self.changePassword)
+
+    def changePassword(self):
+        try:
+            # msgBox = QMessageBox()
+            # msgBox.setText('Are you sure you want to change your Password?')
+            # msgBox.setWindowTitle('Confirm Password Change')
+            # msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            # msgBox.setIcon(QMessageBox.Information)  # Information , Question and warning
+
+            value = myMsgBox('Are you sure you want to change your Password?', 'confirm password change', buttons=QMessageBox.Ok | QMessageBox.Cancel)
+            if value == QMessageBox.Ok:
+                try:
+                    request('get', 'https://google.com')
+                    username = self.txtLoginUser.text()
+                    if not username:
+                        msg = "Username is needed!"
+                    else:
+                        sql = f"""SELECT email from users WHERE username = '{username}'"""
+                        result = cursor.execute(sql).fetchone()[0]
+                        if not result:
+                            msg = "Username not found"
+                        else:
+                            # msg = f"Your new password has been sent to : {result}"
+                            """THE CODE TO GENERATE A NEW PASSWORD FROM SECRETS.TOKEN_URLSAFE(10) AND ENCRYPT IT, SEND TO MAIL
+                            AND UPDATE THE PASSWORD. I.E SEND THE GENERATED OWN TO THE MAIL, AND SEND THE ENCRYPTED ONE TO DATABASE"""
+                            msg = f"Your new password has been sent to your email address"
+                    myMsgBox(msg)
+                except ConnectionError as err:
+                    myMsgBox("No Internet Connection", title='Check Network', icon=QMessageBox.Warning)
+
+        except Exception as err:
+            print(err)
+            myMsgBox(str(err), icon=QMessageBox.Warning)
 
     def showPassword(self):
         if self.txtPassword.echoMode() == 0:
@@ -133,10 +174,10 @@ class Login(QDialog):  # Login inherits every form element from the QDialog impo
             self.txtPassword.setEchoMode(0)
 
     def showUser(self):
-        # self.w = User()
-        # self.w.show()
-        # self.hide()
-        pass
+        self.w = User()
+        self.w.show()
+        self.hide()
+        # pass
 
     def register(self):
         # from PyQt5.QtWidgets import QComboBox
@@ -176,21 +217,23 @@ class Login(QDialog):  # Login inherits every form element from the QDialog impo
         passwd = self.txtLoginPass.text()
         sql = f"""SELECT password from users WHERE username = '{username}'"""
         result = cursor.execute(sql).fetchone()
+        msg = ''
 
-        try:
-            if not username or not passwd:
-                msg = "No empty fields allowed!"
-            elif not result:
-                msg = "Invalid Password"
-            else:
-                if Sun.verify(passwd, result[0]):
-                    print('logged')
-                    print('after logged')
+        if not username or not passwd:
+            msg = "No empty fields allowed!"
+        elif not result:
+            msg = "Invalid Password"
+        else:
+            # if Sun.verify(passwd, result[0]):
+            try:
+                if passwd and username:
+                    User.username = username
+                    self.showUser()
+
                 else:
                     msg = "Your password is incorrect"
-        except Exception as err:
-            print(err)
-            msg = str(err)
+            except Exception as err:
+                print('Problem dey', err)
 
         self.lblLoginMsg.setText(msg)
 
@@ -200,6 +243,16 @@ def closeApp():
     sys.exit()
 
 
+def myMsgBox(text, title="Message Box Information", icon=QMessageBox.Information, buttons=QMessageBox.Ok):
+    msgBox = QMessageBox()
+    msgBox.setText(text)
+    msgBox.setWindowTitle(title)
+    msgBox.setStandardButtons(buttons)
+    msgBox.setIcon(icon)  # Information , Question and warning
+
+    return msgBox.exec_()
+
+
 app = QApplication(sys.argv)
-win = User()  # First form to run
+win = Login()  # First form to run
 sys.exit(app.exec_())  # Prevents the app from closing after we run the python script

@@ -855,6 +855,21 @@ color: grey;</string>
            </property>
           </widget>
          </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QPushButton" name="btnForgot">
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: #5C55E9;
+text-decoration: underline;
+background: transparent;</string>
+           </property>
+           <property name="text">
+            <string>Forgot Password? Click to Recover</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>

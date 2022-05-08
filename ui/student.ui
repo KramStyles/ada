@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>996</width>
-    <height>907</height>
+    <height>1068</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -479,7 +479,7 @@ QScrollBar::sub-page:vertical
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QFrame" name="profileFrame">
       <property name="frameShape">
@@ -697,6 +697,63 @@ QScrollBar::sub-page:vertical
       </layout>
      </widget>
     </item>
+    <item>
+     <widget class="QFrame" name="studentFrame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QTableWidget" name="tableWidget">
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::WinPanel</enum>
+         </property>
+         <column>
+          <property name="text">
+           <string>Full Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Username</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Email Address</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>User Type</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Faculty</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Department</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Registered</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -712,6 +769,7 @@ QScrollBar::sub-page:vertical
     <property name="title">
      <string>Profile</string>
     </property>
+    <addaction name="actionShow_Profile"/>
    </widget>
    <widget class="QMenu" name="menuPassword">
     <property name="title">
@@ -723,6 +781,7 @@ QScrollBar::sub-page:vertical
     <property name="title">
      <string>Results</string>
     </property>
+    <addaction name="actionStudents"/>
    </widget>
    <widget class="QMenu" name="menuQuit">
     <property name="title">
@@ -744,6 +803,16 @@ QScrollBar::sub-page:vertical
   <action name="actionChange_Password">
    <property name="text">
     <string>Change Password</string>
+   </property>
+  </action>
+  <action name="actionStudents">
+   <property name="text">
+    <string>Students</string>
+   </property>
+  </action>
+  <action name="actionShow_Profile">
+   <property name="text">
+    <string>Show Profile</string>
    </property>
   </action>
  </widget>

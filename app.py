@@ -1,6 +1,6 @@
 from functions import password
 import sys, sqlite3, secrets  # To bring in the operating system
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QMainWindow, QWidget, QMessageBox, QInputDialog  # To introduce the Qapplication and QDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QMainWindow, QWidget, QMessageBox, QInputDialog, QTableWidgetItem  # To introduce the Qapplication and QDialog
 from PyQt5.uic import loadUi  # is used to run the UI designed
 from PyQt5.QtCore import QTimer
 from datetime import datetime
@@ -88,6 +88,7 @@ class User(QMainWindow):
             self.w = None
             self.loadInfo()
             self.buttonHandle()
+            self.showProfile()
             self.show()
         except Exception as err:
             print(err)
@@ -95,6 +96,29 @@ class User(QMainWindow):
     def buttonHandle(self):
         self.actionClose.triggered.connect(closeApp)
         self.btnEdit.clicked.connect(self.editProfile)
+        self.actionStudents.triggered.connect(self.showStudentFrame)
+        self.actionShow_Profile.triggered.connect(self.showProfile)
+
+    def hideFrames(self):
+        self.profileFrame.hide()
+        self.studentFrame.hide()
+
+    def showStudentFrame(self):
+        self.hideFrames()
+        self.studentFrame.show()
+        result = select('users', "fullname, username, email, usertype, faculty, department, regdate")
+        self.tableWidget.setRowCount(0)
+        for rows, columns in enumerate(result):
+            self.tableWidget.insertRow(rows)
+            for rowData, columnData in enumerate(columns):
+                self.tableWidget.setItem(rows, rowData,
+                                         QTableWidgetItem(str(columnData)))
+        
+
+    def showProfile(self):
+        self.hideFrames()
+        self.profileFrame.show()
+
 
     def editProfile(self):
         print('hello')

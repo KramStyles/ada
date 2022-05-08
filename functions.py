@@ -1,8 +1,21 @@
-import smtplib
+import smtplib, sqlite3
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from passlib.hash import sun_md5_crypt as Sun
+
+db = sqlite3.connect('database.sql', check_same_thread=False)
+cursor = db.cursor()
+
+def select(table, what="*", condition=""):
+    sql = f"""SELECT {what} FROM {table} {condition}"""
+    try:
+        msg = cursor.execute(sql).fetchall()
+    except Exception as err:
+        print("SELECT ERROR: ", err)
+        msg = str(err)
+    return msg
+
 
 
 def checkEmpty(shadow):
